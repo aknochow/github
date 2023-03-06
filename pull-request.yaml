@@ -1,0 +1,10 @@
+---
+- name: Github Pull Request
+  hosts: localhost
+  vars:
+    source_repo: ""
+    source_branch: ""
+  tasks:
+  - name: Import pr-open role
+    ansible.builtin.import_role:
+      name: pr-open  
