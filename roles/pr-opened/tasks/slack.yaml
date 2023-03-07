@@ -7,7 +7,7 @@
     parse: none
     msg: |
       >*{{ awx_job_template_name }} Opened (`{{ pr_sha7 }}`)*
-      <{{ pr_url }}|{{ pr_url }}> <{{ pr_diff_url }}|(diff)>
+      <{{ pr_url }}|{{ pr_url }}>  <{{ pr_diff_url }}|(diff)>
       sha: `{{ pr_sha }}` `{{ pr_sha7 }}`
       source_repo: `{{ source_repo }}`  source_branch: `{{ source_branch }}`
       pr_base_repo: `{{ pr_base_repo }}`  pr_base_branch: `{{ pr_base_branch }}`
