@@ -1,21 +1,9 @@
 ---
 - name: Github Pull Request
   hosts: localhost
-  vars:
-    source_repo: ""
-    source_branch: ""
+#
   tasks:
-  - name: Import pr-open role
+#
+  - name: Import role based on pr_action
     ansible.builtin.import_role:
-      name: pr-opened
-    when: pr_action == "opened"
-
-  - name: Import pr-closed role
-    ansible.builtin.import_role:
-      name: pr-closed
-    when: pr_action == "closed"
-
-  - name: Import pr-reopened role
-    ansible.builtin.import_role:
-      name: pr-reopened
-    when: pr_action == "reopened"
+      name: pr-{{ pr_action }}

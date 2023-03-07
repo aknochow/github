@@ -1,0 +1,4 @@
+---
+- name: Include slack notifications
+  include: slack.yaml
+  when: slack_notify | bool
