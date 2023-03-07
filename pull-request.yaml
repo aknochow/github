@@ -7,15 +7,15 @@
   tasks:
   - name: Import pr-open role
     ansible.builtin.import_role:
-      name: pr-open
+      name: pr-opened
     when: pr_action == "opened"
 
   - name: Import pr-closed role
     ansible.builtin.import_role:
-      name: pr-open
+      name: pr-closed
     when: pr_action == "closed"
 
   - name: Import pr-reopened role
     ansible.builtin.import_role:
-      name: pr-open
+      name: pr-reopened
     when: pr_action == "reopened"
