@@ -1,0 +1,14 @@
+---
+- name: Github Check Run
+  hosts: localhost
+  vars:
+    github_app_key: ""
+    github_app_id: ""
+    github_pr_source_repo: ""
+    github_pr_sha: ""
+#
+  tasks:
+#
+  - name: Import role based on cr_action
+    ansible.builtin.import_role:
+      name: cr-{{ cr_action }}

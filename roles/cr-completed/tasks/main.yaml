@@ -1,0 +1,53 @@
+---
+- name: Generate temporary jwt credentials using stored app_key
+  ansible.builtin.script:
+    executable: python
+    cmd: generate.py {{ github_app_key }} {{ github_app_id }}
+  register: github_jwt
+
+- name: Get token from stdout
+  ansible.builtin.set_fact:
+    github_jwt_token: "{{ (github_jwt.stdout | from_yaml).JWT }}"
+
+- name: Get Installation
+  ansible.builtin.uri:
+    url: https://api.github.com/app/installations
+    return_content: true
+    headers:
+      Accept: application/vnd.github+json
+      Authorization: Bearer {{ github_jwt_token }}
+      X-GitHub-Api-Version: 2022-11-28
+  register: github_installation
+
+- name: Get installation id from json
+  ansible.builtin.set_fact:
+    github_installation_id: "{{ github_installation.json | community.general.json_query('[].id') | first }}"
+
+- name: Get Installation Token from https://api.github.com/app/installations/{{ github_installation_id }}/access_tokens
+  ansible.builtin.uri:
+    method: POST
+    url: https://api.github.com/app/installations/{{ github_installation_id }}/access_tokens
+    return_content: true
+    status_code: 201
+    headers:
+      Accept: application/vnd.github+json
+      Authorization: Bearer {{ github_jwt_token }}
+      X-GitHub-Api-Version: 2022-11-28
+  register: github_installation_token_json
+
+- name: Set installation token from json
+  ansible.builtin.set_fact:
+    github_installation_token: "{{ github_installation_token_json.json.token }}"
+
+# Fix with real values
+- name: Check Run completed
+  ansible.builtin.uri:
+    method: POST
+    url: https://api.github.com/repos/{{ github_pr_source_repo }}/check-runs
+    status_code: 201
+    headers:
+      Accept: application/vnd.github+json
+      Authorization: Bearer {{ github_installation_token }}
+      X-GitHub-Api-Version: 2022-11-28
+    body_format: json
+    body: '{"name":"dummy-ci-test","head_sha":"{{ github_pr_sha }}","status":"completed","started_at":"2018-05-04T01:14:52Z","conclusion":"success","completed_at":"2017-11-30T19:49:10Z","output":{"title":"Cross Component CI Check","summary":"There are 0 failures, 2 warnings, 5 passed.","text":"All cross-component tests passed, rest assured knowing your code will work with all major integrations."}'
